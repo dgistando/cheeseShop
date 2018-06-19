@@ -9,10 +9,26 @@ db.once('open', () => {console.log("Connected to mongoose!")})
 var Schema = mongoose.Schema
 
 var infoSchema = new Schema({
-    name : String,
-    link : String,
+    //id : Int
+    Name : String,
+    Link : String,
+    Img : String,
     Made : String,
-    origin : String
+    Country_of_origin : String,
+    Family : String,
+    Type : String,
+    Fat_content : String,
+    Calcium_content : String,
+    Texture : String,
+    Rind : String,
+    Colour : String,
+    Flavour : String,
+    Aroma : String,
+    Vegetarian : String,
+    Producers : String,
+    Synonyms : String,
+    Alternative_spelling : String,
+    Fat_dry : String
 },{collection : "info"})
 
 var Info = mongoose.model('Info', infoSchema)

@@ -2,10 +2,12 @@ const rp = require('request-promise');
 const cheerio = require('cheerio');
 
 const { Writable } = require('stream')
+var fs = require('fs')
+var request = require('request')
 
 const MongoClient = require('mongodb').MongoClient;
 const assert = require('assert')
-const url = 'mongodb://127.0.0.1:27017/testCheese'
+const url = 'mongodb://127.0.0.1:27017/Cheese'
 
 
 /**
@@ -22,6 +24,16 @@ const url = 'mongodb://127.0.0.1:27017/testCheese'
  * 
  */
 
+const downloadImage = function(uri, filename, callback){
+    request.head(uri, function(err, res, body){
+      console.log('content-type:', res.headers['content-type']);
+      console.log('content-length:', res.headers['content-length']);
+  
+      request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
+    });
+};
+
+
 MongoClient.connect(url, {useNewUrlParser: true}, function(err, client){
     assert.equal(null, err)
     console.log("DB Connected!")
@@ -35,7 +47,7 @@ MongoClient.connect(url, {useNewUrlParser: true}, function(err, client){
             var cheeses = JSON.parse(chunk.toString())
 
             //add them all to thnigs already read
-            cheeses.forEach(element => cheeseAlreadyRead.push(element.name));
+            cheeses.forEach(element => cheeseAlreadyRead.push(element.Name));
 
             testCollection.insert(cheeses, (e, result) => {
                 assert.equal(e,null)
@@ -47,7 +59,7 @@ MongoClient.connect(url, {useNewUrlParser: true}, function(err, client){
         }
     })
 
-    const START_URI = "<unknown cheese place>"
+    const START_URI = "https://www.cheese.com/"
     var cheeseAlreadyRead = []
     var done = "done"
 
@@ -68,14 +80,35 @@ MongoClient.connect(url, {useNewUrlParser: true}, function(err, client){
                 return START_URI.concat(str.substring(first, str.indexOf('/',first)+1))
             }
 
+            var getImage = (str) => { //expected format: ​​​​​<img src="/media/img/cheese-thumbs/Midnight_Moon_Gouda.jpg" alt="Gouda" title="Gouda">​​​​​
+                var start = str.indexOf("src") + 5
+                var str2 = str.substring(start)
+        
+                //The larger version of the image is at .../img/cheese/<name>.jpg
+                var imgLink = str2.substring(0, str2.indexOf('"')).replace("-thumbs",'')
+                var numname = imgLink.lastIndexOf('/')
+        
+                var location = imgLink.substring(numname, numname.length)
+
+                downloadImage(
+                    //START_URI + str2.substring(0, str2.indexOf('"')).replace("-thumbs",''),  
+                    START_URI + imgLink,
+                    './images/'+location,
+                    () => {console.log("got : " + str2)}
+                );
+                //returns the name of the image to be saved with the cheese data.
+                return location;
+            }
+
             //var iter=0 //debug
 
             $('.row').find('.cheese-item').each( function(i, entity){
                 //if(iter === 2)return; //debug. only 2 items per page
 
                 cheeseNames.push({
-                        name: $(this).find('a').html(),
-                        link: parseLink($(this).find('h3').html()) //papa bless
+                    Name: $(this).find('a').html(),
+                    Link: parseLink($(this).find('h3').html()), //papa bless
+                    Img : getImage($(this).find('.cheese-image-border').children().html())
                 })
 
                // iter++ //debug
@@ -84,14 +117,15 @@ MongoClient.connect(url, {useNewUrlParser: true}, function(err, client){
         }).then((cheeses) => {
 
             var finalCheeses = cheeses.map(cheese => {
-                options.uri = cheese.link
+                options.uri = cheese.Link
 
                 return rp(options).
                     then(($) => {
 
                     var cheeseInfo = {}
-                    cheeseInfo['name'] = cheese.name
-                    cheeseInfo['link'] = cheese.link
+                    cheeseInfo['Name'] = cheese.Name
+                    cheeseInfo['Link'] = cheese.Link
+                    cheeseInfo['Img']  = cheese.Img
 
                     $('.summary-points').find('p').each( function(i, entity){
                         var strs =  $(this).text()
@@ -100,8 +134,9 @@ MongoClient.connect(url, {useNewUrlParser: true}, function(err, client){
                         if(strs == spl) {
                             spl = strs.split(" from ")
                         }
-
-                        cheeseInfo[spl[0]] = spl[1]
+                        
+                        //mongoose doesn't like spaces
+                        cheeseInfo[spl[0].split(' ').join('_')] = spl[1]
                     })
 
                     return cheeseInfo
@@ -115,12 +150,15 @@ MongoClient.connect(url, {useNewUrlParser: true}, function(err, client){
         }).then((allCheese) => {
             //console.log(allCheese)
         
-            if(cheeseAlreadyRead.includes(allCheese[0].name)){
+            //Check the cheese that have been read already
+            //There was a mistake on page 43 so I chekc first and last now
+            if(cheeseAlreadyRead.includes(allCheese[0].Name) && cheeseAlreadyRead.includes(allCheese[allCheese.length-1].Name) ){
+                console.log("REPEAT DATA!!!")
                 get_cheese(done) //signal for repeating data
                 client.close()
             }else{
 
-                !wStream.write(JSON.stringify(allCheese))
+                wStream.write(JSON.stringify(allCheese))
                 //Recursive call to the next page
                 if(_uri === START_URI){ 
                     _uri = _uri + '?per_page=20&page=1#top' //This link and the START_URI return the same page

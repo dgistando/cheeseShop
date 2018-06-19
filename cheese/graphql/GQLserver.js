@@ -24,20 +24,62 @@ var CheeseType = new graphql.GraphQLObjectType({
     name : 'cheese',
     fields : function(){
         return {
-            id : {
-                type: graphql.GraphQLID 
+            Name : {
+                type : graphql.GraphQLString
             },
-            name : {
-                type: graphql.GraphQLString
+            Link : {
+                type : graphql.GraphQLString
+            },
+            Img : {
+                type : graphql.GraphQLString
             },
             Made : {
-                type: graphql.GraphQLString
+                type : graphql.GraphQLString
             },
-            link : {
-                type: graphql.GraphQLString
+            Country_of_origin : {
+                type : graphql.GraphQLString
             },
-            origin : {
-                type: graphql.GraphQLString
+            Family : {
+                type : graphql.GraphQLString
+            },
+            Type : {
+                type : graphql.GraphQLString
+            },
+            Fat_content : {
+                type : graphql.GraphQLString
+            },
+            Calcium_content : {
+                type : graphql.GraphQLString
+            },
+            Texture : {
+                type : graphql.GraphQLString
+            },
+            Rind : {
+                type : graphql.GraphQLString
+            },
+            Colour : {
+                type : graphql.GraphQLString
+            },
+            Flavour : {
+                type : graphql.GraphQLString
+            },
+            Aroma : {
+                type : graphql.GraphQLString
+            },
+            Vegetarian : {
+                type : graphql.GraphQLString
+            },
+            Producers : {
+                type : graphql.GraphQLString
+            },
+            Synonyms : {
+                type : graphql.GraphQLString
+            },
+            Alternative_spelling : {
+                type : graphql.GraphQLString
+            },
+            Fat_dry : {
+                type : graphql.GraphQLString
             }
         }
     }
@@ -46,42 +88,85 @@ var CheeseType = new graphql.GraphQLObjectType({
 var queryType = new graphql.GraphQLObjectType({
     name:'Query',
     fields : () => ({
-       getCheese: {
-           type: new GraphQLList(CheeseType),
-           resolve : () => {
-               return new Promise((resolve, reject) => {
-                   Info.find((err, cheese) => {
-                       err ? reject(err) : resolve(cheese)
-                   })
-               })
-           }
-       },
-
-       otherOne : {
+        //This query just gets all the cheeses
+        getAllCheese: {
             type: new GraphQLList(CheeseType),
-            resolve : (obj, args, context) => {
+            resolve : () => {
                 return new Promise((resolve, reject) => {
                     Info.find((err, cheese) => {
                         err ? reject(err) : resolve(cheese)
                     })
                 })
             }
-       }
+        },
+
+        //searches by name any matching string
+        Search : {
+            type: new GraphQLList(CheeseType),
+            args: {
+                search : {type : graphql.GraphQLString}
+            },
+            resolve : (_, {search}) => {
+                return new Promise((resolve, reject) => {
+
+                    Info.find({name : new RegExp(search)}, (err, cheese) => {
+                        err ? reject(err) : resolve(cheese)
+                    })
+                })
+            }
+        },
+
+        //searches name, but only first letter. upper or lower
+        letterSearch : {
+            //Make sure there is a check before this for
+            // length of the string == 1
+            type: new GraphQLList(CheeseType),
+            args: {
+                letter : {type : graphql.GraphQLInt}
+            },
+            resolve : (_, {letter}) => {
+                return new Promise((resolve, reject) => {
+
+                    var letters = String.fromCharCode(letter).toLowerCase() + String.fromCharCode(letter).toUpperCase()
+
+                    Info.find({name : new RegExp(`^[${letters}].*`)}, (err, cheese) => {
+                        err ? reject(err) : resolve(cheese)
+                    })
+                })
+            }
+        },
+
+        //Search by feel / type
+        // data looks like this; Type : " soft, artisan, <other descriptive word>" 
+        TypeSearch : {
+            //try to get comma separated list
+            //maybe check boxes to convert to list
+            type: new GraphQLList(CheeseType),
+            args: {
+                desc : {type : graphql.GraphQLString}
+            },
+            resolve : (_, {desc}) => {
+                return new Promise((resolve, reject) => {
+                    desc = desc.replace(' ','');
+                    var descriptions = desc.split(',')
+                        
+                    console.log(descriptions)
+                    
+                    Info.find({Type : {$in : descriptions.map(x => {
+                        return new RegExp(x)
+                   })}}, (err, cheese) => {
+                        err ? reject(err) : resolve(cheese)
+                    })
+                })
+            }
+        },
+        //Planning to use another unique ID that defines similarity in cheeses
     })
 });
 
 var schema = new GraphQLSchema({
     query : queryType
 })
-
-class Cheese{
-    constructor(Cheeses){
-        this.name = Cheeses.name
-        this.Made = Cheeses.Made
-        this.link = Cheeses.link
-        this.origin = Cheeses.origin
-    }
-}
 
 var root = { //get the cheese from mongoose here
     getCheese : ({name}) => {
@@ -102,51 +187,6 @@ var root = { //get the cheese from mongoose here
         return foundItems
     }*/
 }
-
-/*var schema = buildSchema(`
-        type qType {
-            num : Int
-            name : String
-            getName : String
-            setName(newName : String) : String
-        }
-
-        type Query{
-            message: String,
-            something(id : Int!): qType
-        }
-`);
-
-class qType{
-    constructor(numberPassed){
-        this.num = numberPassed
-        this.name = `this is my name ${numberPassed}`
-    }
-
-    getName(){
-        return this.name
-    }
-
-    setName(nameNum){
-       this.name = `this is my new name ${nameNum}`
-       return this.name
-    }
-}
-
-var root = {
-    message : () => 'Sup Worlds!!',
-    //something  : ({id}) => Array.apply(null, {length: id}).map(Number.call, Number)
-    something  : ({id}) => new qType(id)
-};
-
-
-var app = express();
-app.use('/graphql', express_graphql({
-    schema : schema,
-    rootValue : root,
-    graphiql : true
-}));
-app.listen(4000, () => console.log('listening...'));*/
 
 var app = express();
 app.use('/graphql', graphQLHTTP({
