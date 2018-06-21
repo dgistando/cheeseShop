@@ -5,7 +5,7 @@ var fs = require('fs')
 var request = require('request')
 
 const options = {
-    uri : 'https://www.cheese.com/',
+    uri : 'unknown Cheese source',
     transform : (body) => cheerio.load(body)
 }
 

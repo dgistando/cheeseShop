@@ -59,7 +59,7 @@ MongoClient.connect(url, {useNewUrlParser: true}, function(err, client){
         }
     })
 
-    const START_URI = "https://www.cheese.com/"
+    const START_URI = `<unknown cheese place>`
     var cheeseAlreadyRead = []
     var done = "done"
 

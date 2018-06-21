@@ -1,12 +1,18 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
+import {selectCheese} from '../actions/index';
+import {bindActionCreators} from 'redux';
 
 class CheeseList extends Component{
     
     getList(){
         return (
             this.props.Cheese.map( cheeseItem => {
-                return <li key={cheeseItem.name} className={"list-group-item"}>{cheeseItem.name}</li>
+                return <li
+                key={cheeseItem.name}
+                className={"list-group-item"}
+                onClick={() => this.props.selectCheese(cheeseItem)}
+                >{cheeseItem.name}</li>
             })
         )
     }
@@ -20,6 +26,12 @@ class CheeseList extends Component{
     }
 }
 
+//Anything that comes from here becomes props in list
+function matchDispatchToProps(dispatch){
+    //when selectedCheese is called is comes here and is passed to the reducers
+    return bindActionCreators({selectCheese : selectCheese}, dispatch)
+}
+
 function mapStateToProps(state){
     //whatever is returns becomes props in booklist
     return {
@@ -27,4 +39,4 @@ function mapStateToProps(state){
     };
 }
             //takes a function and a data type and assigns to props as state
-export default connect(mapStateToProps)(CheeseList)
+export default connect(mapStateToProps, matchDispatchToProps)(CheeseList)
