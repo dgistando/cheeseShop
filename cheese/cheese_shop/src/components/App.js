@@ -3,11 +3,13 @@ import './App.css';
 
 import CheeseList from '../containers/cheese_list'
 import CheeseDetail from '../containers/cheese_detail'
+import DynamicSearch from '../containers/search_parameters'
 
 class App extends Component {
   render() {
     return (
-      <div>
+      <div className="container">
+       <DynamicSearch />
        <CheeseList />
        <CheeseDetail />
       </div>

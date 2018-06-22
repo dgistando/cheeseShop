@@ -15,9 +15,6 @@ const options = {
  * getting the cheese information. I added these parts to get_cheese.js
  * 
  */
-
-console.log("before downloading")
-
 const download = function(uri, filename, callback){
   request.head(uri, function(err, res, body){
     console.log('content-type:', res.headers['content-type']);
@@ -27,15 +24,6 @@ const download = function(uri, filename, callback){
   });
 };
 
-console.log("before image insert")
-
-download('https://www.google.com/images/srpr/logo3w.png', './images/google.png', function(){
-  console.log('done');
-});
-
-
-console.log("after image inserted")
-/*
 rp(options)
  .then(($) => {
     var iter = 0
@@ -63,4 +51,4 @@ rp(options)
 
 }).catch(e => {
     console.log(e)
-})*/
+})

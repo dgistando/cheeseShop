@@ -7,8 +7,9 @@ import registerServiceWorker from './registerServiceWorker';
 import {Provider} from 'react-redux';
 import {createStore, applyMiddleware} from 'redux';
 import reducers from './reducers';
+import ReduxPromise from 'redux-promise';
 
-const storeFromMiddleWare = applyMiddleware()(createStore)
+const storeFromMiddleWare = applyMiddleware(ReduxPromise)(createStore)
 
 ReactDOM.render(
                 <Provider store = {storeFromMiddleWare(reducers)}>
@@ -17,12 +18,3 @@ ReactDOM.render(
                 document.getElementById('root'));
                 
 registerServiceWorker();
-
-/**
- *  "start": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js",
-    //"start": "react-scripts start",
-    //"build": "react-scripts build",
-    //"test": "react-scripts test --env=jsdom",
-    //"eject": "react-scripts eject"
- * 
- */
