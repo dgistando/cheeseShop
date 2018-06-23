@@ -1,11 +1,11 @@
 import {combineReducers} from 'redux';
-import CheeseReducer from './reducer_cheese'
+import CheeseReducer from './reducer_cheeses'
 import activeCheese from './reducer_active_cheese'
 
 const rootReducer = combineReducers({
     //this is part of the global app state
     //so we can use cheese wherever
-    Cheese : CheeseReducer,
+    Cheeses : CheeseReducer, //TODO make this some initial value. Maybe get 5 random ones
     ActiveCheese : activeCheese
 })
 

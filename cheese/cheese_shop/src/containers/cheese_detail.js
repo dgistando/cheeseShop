@@ -6,10 +6,12 @@ class CheeseDetail extends Component{
     render(){
         if(!this.props.Cheese)return <div></div>;
 
+        //<div>Type : {this.props.Cheese.other.Type}</div>
+
         return(
             <div>
-                <h3>{this.props.Cheese.name}</h3>
-                <div>colour : {this.props.Cheese.colour}</div>
+                <h3>{this.props.Cheese.Name}</h3>
+                
             </div> 
         );
     }

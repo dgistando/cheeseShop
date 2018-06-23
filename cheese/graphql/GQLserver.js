@@ -109,7 +109,7 @@ var queryType = new graphql.GraphQLObjectType({
             resolve : (_, {search}) => {
                 return new Promise((resolve, reject) => {
 
-                    Info.find({name : new RegExp(search)}, (err, cheese) => {
+                    Info.find({Name : new RegExp(search)}, (err, cheese) => {
                         err ? reject(err) : resolve(cheese)
                     })
                 })
@@ -129,7 +129,7 @@ var queryType = new graphql.GraphQLObjectType({
 
                     var letters = String.fromCharCode(letter).toLowerCase() + String.fromCharCode(letter).toUpperCase()
 
-                    Info.find({name : new RegExp(`^[${letters}].*`)}, (err, cheese) => {
+                    Info.find({Name : new RegExp(`^[${letters}].*`)}, (err, cheese) => {
                         err ? reject(err) : resolve(cheese)
                     })
                 })
@@ -188,8 +188,10 @@ var root = { //get the cheese from mongoose here
     }*/
 }
 
+const cors = require('cors');
+
 var app = express();
-app.use('/graphql', graphQLHTTP({
+app.use('/graphql', cors(), graphQLHTTP({
     schema, 
     pretty : true,
     graphiql: true, }));

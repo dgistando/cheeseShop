@@ -1,5 +1,9 @@
 import React, {Component} from 'react';
 import {SplitButton, MenuItem, Navbar, FormGroup, FormControl} from 'react-bootstrap';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+
+import {searchCheese} from '../actions/index';
 
 /**
  *  My plan for this class is to give the option to search 
@@ -16,7 +20,7 @@ import {SplitButton, MenuItem, Navbar, FormGroup, FormControl} from 'react-boots
  *  [A][B][C]...
  */
 
-export default class DynamicSearch extends Component{
+class DynamicSearch extends Component{
 
     constructor(props){
         super(props);
@@ -24,6 +28,7 @@ export default class DynamicSearch extends Component{
                       title : 'Search'}
         this.handleSelect = this.handleSelect.bind(this);
         this.onInputChange = this.onInputChange.bind(this);
+        this.onFormSubmit = this.onFormSubmit.bind(this);
     }
 
     onInputChange(event){
@@ -33,7 +38,13 @@ export default class DynamicSearch extends Component{
 
     onFormSubmit(event){
         event.preventDefault()
-        console.log(event)
+
+        //console.log(this.state.term)
+
+        //After this is pressed, the CheeseList needs to update
+        //Not sure yet how to do it. Just watch the rest of the video.
+        this.props.searchCheese(this.state.term)
+        this.setState({ term : ''})
     }
 
     handleSelect(eventKey){
@@ -57,7 +68,8 @@ export default class DynamicSearch extends Component{
                 <Navbar.Toggle />
             </Navbar.Header>
             <Navbar.Collapse>
-                <Navbar.Form onSubmit={this.onFormSubmit} pullLeft>
+                <Navbar.Form pullLeft>
+                <form onSubmit={this.onFormSubmit}>
                 <FormGroup>
                     <FormControl type="text"
                                  placeholder="Search"
@@ -76,9 +88,16 @@ export default class DynamicSearch extends Component{
                             <MenuItem divider />
                             <MenuItem onSelect={this.handleSelect} eventKey="All Cheese">All Cheese</MenuItem>
                     </SplitButton>
+                    </form>
                 </Navbar.Form>
             </Navbar.Collapse>
             </Navbar>
         );
     }
 }
+
+function mapDispatchtoProps(dispatch){
+    return bindActionCreators({searchCheese}, dispatch)
+}
+                    //dont need to pass in state here
+export default connect(null, mapDispatchtoProps)(DynamicSearch)

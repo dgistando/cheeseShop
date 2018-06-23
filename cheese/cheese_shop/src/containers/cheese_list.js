@@ -3,17 +3,24 @@ import {connect} from 'react-redux';
 import {selectCheese} from '../actions/index';
 import {bindActionCreators} from 'redux';
 
+import _ from '../htmlDecode'
+
 class CheeseList extends Component{
     
     getList(){
+        if(!this.props.Cheeses[0])return <div></div>
+
+        //console.log(this.props.Cheeses[0])
+
         return (
-            this.props.Cheese.map( cheeseItem => {
+            this.props.Cheeses[0].map( cheeseItem => {
                 return <li
-                key={cheeseItem.name}
+                key={_(cheeseItem.Name)}
                 className={"list-group-item"}
                 onClick={() => this.props.selectCheese(cheeseItem)}
-                >{cheeseItem.name}</li>
+                >{_(cheeseItem.Name)}</li>
             })
+            //<li></li>
         )
     }
 
@@ -32,11 +39,16 @@ function matchDispatchToProps(dispatch){
     return bindActionCreators({selectCheese : selectCheese}, dispatch)
 }
 
-function mapStateToProps(state){
-    //whatever is returns becomes props in booklist
+/*function mapStateToProps(state){
+    //whatever is returns becomes props in CheeseList
     return {
-        Cheese: state.Cheese
+        Cheeses: state.Cheeses
     };
-}
+}*/
+
+function mapStateToProps({Cheeses}) {
+    return {Cheeses};
+} 
+
             //takes a function and a data type and assigns to props as state
 export default connect(mapStateToProps, matchDispatchToProps)(CheeseList)
