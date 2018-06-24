@@ -8,8 +8,10 @@ import _ from '../htmlDecode'
 class CheeseList extends Component{
     
     getList(){
-        if(!this.props.Cheeses[0])return <div></div>
-
+        if(!this.props.Cheeses[0]){
+            console.log("Nothign in list")
+            return <div></div>
+        }
         //console.log(this.props.Cheeses[0])
 
         return (
@@ -36,6 +38,7 @@ class CheeseList extends Component{
 //Anything that comes from here becomes props in list
 function matchDispatchToProps(dispatch){
     //when selectedCheese is called is comes here and is passed to the reducers
+    //console.log("dispatching select Cheese")
     return bindActionCreators({selectCheese : selectCheese}, dispatch)
 }
 

@@ -44,7 +44,7 @@ class DynamicSearch extends Component{
         //After this is pressed, the CheeseList needs to update
         //Not sure yet how to do it. Just watch the rest of the video.
         this.props.searchCheese(this.state.term)
-        this.setState({ term : ''})
+        //this.setState({ term : ''})//Dont nned to clear searchbox
     }
 
     handleSelect(eventKey){
@@ -81,6 +81,7 @@ class DynamicSearch extends Component{
                         title={this.state.title}
                         key={1}
                         id={`split-button-basic-${1}`}
+                        onClick={this.onFormSubmit}
                         >
                             <MenuItem onSelect={this.handleSelect} eventKey="Name">Name</MenuItem>
                             <MenuItem onSelect={this.handleSelect} eventKey="Letter">Letter</MenuItem>

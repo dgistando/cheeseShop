@@ -24,10 +24,21 @@ module.exports = {
             test:/\.css$/,
             //Webpack executes loaders in reverse order so css comes first. >:((
             use:['style-loader','css-loader']
+          },
+          {
+            test:/\.(png|jpg|gif|svg|ico|JPG|jpeg|PNG|jpg_256)$/,
+            use:[
+              {
+                loader:'file-loader',
+                options : {
+                  name: '[path][name]-[hash:8].[ext]'
+                },
+              }
+            ]
           }
         ]
       },
-    plugins : [//handles post download code
+    plugins : [//handles code post download 
         new uglify()
     ],
     resolve: {

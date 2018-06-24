@@ -12,7 +12,11 @@ export function searchCheese(cheese){
     var SearchQuery = `{
         Search(search : \"${cheese}\"){
             Name
+            Img
+            Made
             Type
+            Colour
+            Flavour
         }
     }`
 
@@ -32,6 +36,9 @@ export function searchCheese(cheese){
 }
 
 export function selectCheese(cheeseItem){
+
+    //console.log(cheeseItem)
+
     return {
         type : SELECT_CHEESE,
         payload : cheeseItem

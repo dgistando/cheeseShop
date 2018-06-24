@@ -30,7 +30,9 @@
     "buidl:prod": "webpack"
   },
   "devDependencies": {
+    "file-loader": "^1.1.11",
     "uglifyjs-webpack-plugin": "^1.2.6",
+    "url-loader": "^1.0.1",
     "webpack": "^4.12.0",
     "webpack-dev-middleware": "^3.1.3",
     "webpack-dev-server": "^3.1.4",
