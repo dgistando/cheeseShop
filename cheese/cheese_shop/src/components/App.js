@@ -10,10 +10,8 @@ class App extends Component {
     return (
       <div className="container">
         <DynamicSearch />
-        <div className="main">
-          <CheeseList />
-          <CheeseDetail />
-        </div>
+        <CheeseList />
+        <CheeseDetail />
       </div>
     );
   }

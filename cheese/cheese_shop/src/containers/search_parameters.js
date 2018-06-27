@@ -5,6 +5,8 @@ import {bindActionCreators} from 'redux';
 
 import {searchCheese} from '../actions/index';
 
+
+
 /**
  *  My plan for this class is to give the option to search 
  *  many different ways. I want the search bar to change depending on what 
@@ -25,10 +27,11 @@ class DynamicSearch extends Component{
     constructor(props){
         super(props);
         this.state = {term : '',
-                      title : 'Search'}
+                      title : 'Name'}
         this.handleSelect = this.handleSelect.bind(this);
         this.onInputChange = this.onInputChange.bind(this);
         this.onFormSubmit = this.onFormSubmit.bind(this);
+        this.nonFormSubmit = this.nonFormSubmit.bind(this);
     }
 
     onInputChange(event){
@@ -39,23 +42,72 @@ class DynamicSearch extends Component{
     onFormSubmit(event){
         event.preventDefault()
 
-        //console.log(this.state.term)
-
         //After this is pressed, the CheeseList needs to update
         //Not sure yet how to do it. Just watch the rest of the video.
         this.props.searchCheese(this.state.term)
         //this.setState({ term : ''})//Dont nned to clear searchbox
     }
 
+    nonFormSubmit(Letter){
+        console.log(Letter.letter)
+    }
+
     handleSelect(eventKey){
         this.setState({title:eventKey})
+    }
 
-        switch(eventKey){
+
+    getNameSearch(){
+        return (
+            <FormControl type="text"
+            placeholder="Search"
+            value={this.state.term}
+            onChange={this.onInputChange} />
+        );
+    }
+
+    getLetterSearch(){
+       const alphabet = returnAlphabetObject();
+    
+    //TODO, Make toggle button group instead. It already flexes... smh
+    return(
+            <ul className="flex-container wrap">
+                {alphabet.map(Letter =>{
+                    return (
+                        <li className="flex-item" key={Letter.letter}>
+                            <a href='#' onClick={() => this.nonFormSubmit(Letter)}>{Letter.letter}</a>
+                        </li>
+                    )   
+                })}
+            </ul>
+        )
+
+    }
+
+    getFeelSearch(){
+        return <div>Feel Search</div>
+    }
+
+    getAllCheese(){
+        return <div>1831 Cheeses Loaded</div>
+    }
+
+    renderSearch(type){
+
+        switch(type){
             case('Name') :
              console.log("Name selected")
-            break; 
+             return this.getNameSearch();
+            case('Letter') :
+             console.log("Letter selected")
+             return this.getLetterSearch();
+            case('Feel') :
+             console.log("Feel selected")
+             return this.getFeelSearch();
+            case('All Cheese') :
+             console.log("All Cheese selected")
+             return this.getAllCheese();
         }
-
     }
 
     render(){
@@ -71,10 +123,7 @@ class DynamicSearch extends Component{
                 <Navbar.Form pullLeft>
                 <form onSubmit={this.onFormSubmit}>
                 <FormGroup>
-                    <FormControl type="text"
-                                 placeholder="Search"
-                                 value={this.state.term}
-                                 onChange={this.onInputChange} />
+                    {this.renderSearch(this.state.title)}
                 </FormGroup>{' '}
                     <SplitButton
                         bsStyle={'primary'}
@@ -102,3 +151,61 @@ function mapDispatchtoProps(dispatch){
 }
                     //dont need to pass in state here
 export default connect(null, mapDispatchtoProps)(DynamicSearch)
+
+function returnAlphabetObject(){
+    return(
+        [
+            {letter :'A',
+              selected : false
+          },{letter:'B',
+              selected : false
+          },{letter:'C',
+              selected : false
+          },{letter:'D',
+              selected : false
+          },{letter:'E',
+              selected : false
+          },{letter:'F',
+              selected : false
+          },{letter:'G',
+              selected : false
+          },{letter:'H',
+              selected : false
+          },{letter:'I',
+              selected : false
+          },{letter:'J',
+              selected : false
+          },{letter:'K',
+              selected : false
+          },{letter:'L',
+              selected : false
+          },{letter:'M',
+              selected : false
+          },{letter:'N',
+              selected : false
+          },{letter:'O',
+              selected : false
+          },{letter:'P',
+              selected : false
+          },{letter:'Q',
+              selected : false
+          },{letter:'R',
+              selected : false
+          },{letter:'S',
+              selected : false
+          },{letter:'T',
+              selected : false
+          },{letter:'U',
+              selected : false
+          },{letter:'V',
+              selected : false
+          },{letter:'W',
+              selected : false
+          },{letter:'X',
+              selected : false
+          },{letter:'Y',
+              selected : false
+          },{letter :'Z',
+              selected : false}]
+    )
+}
