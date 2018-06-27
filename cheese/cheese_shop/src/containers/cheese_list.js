@@ -1,9 +1,10 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import {selectCheese} from '../actions/index';
+import {selectCheese} from '../actions/index'; 
 import {bindActionCreators} from 'redux';
 
 import _ from '../htmlDecode'
+import '../index.css'
 
 class CheeseList extends Component{
     
@@ -27,10 +28,11 @@ class CheeseList extends Component{
     }
 
     render(){
+        
         return(
-            <ul className={"list-group col-sm-4"}>
-                {this.getList()}
-            </ul>
+                <ul id="cheeseList" className={"list-group col-sm-4"}>
+                    {this.getList()}
+                </ul>
         )
     }
 }

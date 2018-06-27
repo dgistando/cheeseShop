@@ -26,7 +26,7 @@
     "start": "node ./node_modules/webpack-dev-server/bin/webpack-dev-server.js",
     "test": "mocha --compilers js:babel-core/register --require ./test/test_helper.js --recursive ./test",
     "test:watch": "npm run test -- --watch",
-    "build": "webpack-dev-server",
+    "build": "webpack-dev-server --port 8080 --hot --host 0.0.0.0",
     "buidl:prod": "webpack"
   },
   "devDependencies": {

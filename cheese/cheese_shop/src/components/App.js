@@ -9,9 +9,11 @@ class App extends Component {
   render() {
     return (
       <div className="container">
-       <DynamicSearch />
-       <CheeseList />
-       <CheeseDetail />
+        <DynamicSearch />
+        <div className="main">
+          <CheeseList />
+          <CheeseDetail />
+        </div>
       </div>
     );
   }
